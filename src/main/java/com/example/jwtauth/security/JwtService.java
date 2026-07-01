@@ -51,5 +51,24 @@ public class JwtService {
         return claims.getSubject();
 
     }
+    
+    public boolean isTokenValid(String token, String email) {
+
+        return extractUsername(token).equals(email)
+                && !isTokenExpired(token);
+
+    }
+    
+    private boolean isTokenExpired(String token) {
+
+        return Jwts.parser()
+                .verifyWith((javax.crypto.SecretKey) getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .before(new java.util.Date());
+
+    }
 
 }
